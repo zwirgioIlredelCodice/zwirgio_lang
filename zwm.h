@@ -2,7 +2,7 @@
 
 #define NUM_ARGS 4
 
-extern int regs[];
+extern int *regs;
 extern unsigned int pc;
 
 extern int running;
