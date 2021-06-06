@@ -16,9 +16,10 @@ enum instruction
 {
     //Arithmetic
     add,
+    add_immediate,
     subtract,
-    Multiply,
-    Divide,
+    multiply,
+    divide,
 
     //Logical
     and,
@@ -28,7 +29,7 @@ enum instruction
     //Comparison
     equal,
     greater_than,
-    greater_of_equal,
+    greater_equal,
     lower_than,
     lower_equal,
 
@@ -46,6 +47,7 @@ enum instruction
     write,
     memory_alloc_immediate,
     memory_alloc,
+    memory_free,
     memory_free_immediate,
     end,
 };
