@@ -1,0 +1,7 @@
+0 0 0 0
+memory_alloc_immediate 10 0 0
+set_immediate 0 22 0
+set_immediate 1 11 0
+add 2 0 1
+write 2 0 0
+end 0 0 0

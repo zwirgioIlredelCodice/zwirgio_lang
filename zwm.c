@@ -187,7 +187,7 @@ void run(int program[])
 {
     while (running)
     {
-        showRegs();
+        //showRegs();
         fetch();
         decode(program);
         eval();

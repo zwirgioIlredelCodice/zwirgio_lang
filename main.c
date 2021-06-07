@@ -5,19 +5,20 @@
 
 int main()
 {
+    /*
     printf("ghe bello\n");
     int program[] =
         {0, 0, 0, 0,
-         memory_alloc_immediate, 10, 0, 0,
-         set_immediate, 0, 22, 0,
-         set_immediate, 1, 69, 0,
-         add, 3, 0, 1,
-         write, 3, 0, 0,
-         memory_free_immediate, 5, 0, 0,
-         end, 0, 0, 0};
+         20, 10, 0, 0,
+         15, 0, 22, 0,
+         15, 1, 69, 0,
+         0, 3, 0, 1,
+         19, 3, 0, 0,
+         23, 5, 0, 0,
+         24, 0, 0, 0};
     run(program);
     return 0;
-    /*
+    */
    char file_name[] = "example.txt";
    printf("eseguzione file %s\n", file_name);
 
@@ -33,6 +34,13 @@ int main()
     }
 
     zwassembler(file_name, program);
+    printf("*DEBUG* progam \n");
+    for (int i=0; i<numero_comandi; i++) 
+    {
+        printf("%d ",program[i]);
+    }
+    printf("\n");
+    
     run(program);
-    return 0;*/
+    return 0;
 }

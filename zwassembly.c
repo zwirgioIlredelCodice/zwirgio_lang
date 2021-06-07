@@ -119,9 +119,9 @@ void zwassembler(char file_name[], int program[])
 
         for(int i=0; i<NUM_INSTRUCTION; i++)
         {
-            if (strcmp(instrNum,instruction[i]))
+            if (strcmp(instrNum,instruction[i])== 0)
             {
-                not_found = 1;
+                not_found = 0;
                 n_instrNum = i;
                 break;
             }
