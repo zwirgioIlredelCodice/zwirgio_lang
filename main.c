@@ -19,6 +19,7 @@ int main()
     run(program);
     return 0;
     */
+   
    char file_name[] = "example.txt";
    printf("eseguzione file %s\n", file_name);
 
