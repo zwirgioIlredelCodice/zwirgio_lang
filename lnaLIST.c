@@ -126,6 +126,32 @@ void printList(struct Node *node)
     }
 }
 
+
+struct Node *addTwoLists(struct Node *node1, struct Node *node2) 
+{
+    int sum, carry=0;
+    struct Node *resultat = NULL;
+    while (node1 != NULL)
+    {
+        sum = node1->data + node2->data + carry; // es 13
+        printf("sum = %d\n",sum);
+        carry = 0;
+        carry = sum / 10; // carry = 1
+        printf("carry = %d\n",sum);
+        sum -= carry * 10; //sum = 13-(1*10) = 3
+        printf("sumPut = %d\n",sum);
+        push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
+        node1 = node1->next;
+        node2 = node2->next;
+    }
+    if (carry != 0)
+    {
+        push(&resultat, carry);
+        printf("carry+ = %d\n",sum);
+    }
+    return resultat;
+}
+
 /* Driver program to test above functions*/
 int main()
 {
@@ -133,26 +159,22 @@ int main()
     struct Node *list_1 = NULL;
 
     // Insert 6.  So linked list becomes 6->NULL
-    append(&list_1, 6);
+    append(&list_1, 9);
+    append(&list_1, 9);
+    append(&list_1, 9);
+    append(&list_1, 9);
 
-    // Insert 7 at the beginning. So linked list becomes
-    // 7->6->NULL
-    push(&list_1, 7);
+    struct Node *list_2 = NULL;
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
 
-    // Insert 1 at the beginning. So linked list becomes
-    // 1->7->6->NULL
-    push(&list_1, 1);
-
-    // Insert 4 at the end. So linked list becomes
-    // 1->7->6->4->NULL
-    append(&list_1, 4);
-
-    // Insert 8, after 7. So linked list becomes
-    // 1->7->8->6->4->NULL
-    insertAfter(list_1->next, 8);
+    struct Node *list_3 = NULL;
 
     printf("Created DLL is: ");
-    printList(list_1);
 
+    list_3 = addTwoLists(list_1, list_2);
+    printList(list_3);
     return 0;
 }
