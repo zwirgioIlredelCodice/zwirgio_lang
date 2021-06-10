@@ -126,29 +126,76 @@ void printList(struct Node *node)
     }
 }
 
+void printListNum(struct Node *node)
+{
+    struct Node *last;
+    while (node != NULL)
+    {
+        printf("%d", node->data);
+        last = node;
+        node = node->next;
+    }
+}
 
+/*
+add two list struct Node *node1, struct Node *node2 and return struct Node *
+*/
 struct Node *addTwoLists(struct Node *node1, struct Node *node2) 
 {
     int sum, carry=0;
     struct Node *resultat = NULL;
-    while (node1 != NULL)
+    while (node1 != NULL && node2 != NULL)
     {
         sum = node1->data + node2->data + carry; // es 13
-        printf("sum = %d\n",sum);
         carry = 0;
         carry = sum / 10; // carry = 1
-        printf("carry = %d\n",sum);
         sum -= carry * 10; //sum = 13-(1*10) = 3
-        printf("sumPut = %d\n",sum);
         push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
         node1 = node1->next;
         node2 = node2->next;
     }
-    if (carry != 0)
+    if (node1 == NULL && node2 == NULL) //same size
     {
-        push(&resultat, carry);
-        printf("carry+ = %d\n",sum);
+        if (carry != 0)
+        {
+            push(&resultat, carry);
+        }
     }
+
+    else if (node1 == NULL) //size node1 < size node2
+    {
+        while (node2 != NULL)
+        {
+            sum = node2->data + carry; // es 13
+            carry = 0;
+            carry = sum / 10; // carry = 1
+            sum -= carry * 10; //sum = 13-(1*10) = 3
+            push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
+            node2 = node2->next;
+        }
+        if (carry != 0)
+        {
+            push(&resultat, carry);
+        }
+    }
+
+    else //size node1 > size node2
+    {
+        while (node1 != NULL)
+        {
+            sum = node1->data + carry; // es 13
+            carry = 0;
+            carry = sum / 10; // carry = 1
+            sum -= carry * 10; //sum = 13-(1*10) = 3
+            push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
+            node1 = node1->next;
+        }
+        if (carry != 0)
+        {
+            push(&resultat, carry);
+        }
+    }
+    
     return resultat;
 }
 
@@ -159,22 +206,20 @@ int main()
     struct Node *list_1 = NULL;
 
     // Insert 6.  So linked list becomes 6->NULL
-    append(&list_1, 9);
-    append(&list_1, 9);
-    append(&list_1, 9);
-    append(&list_1, 9);
+    push(&list_1, 9);
+    push(&list_1, 9);
+    push(&list_1, 9);
+    push(&list_1, 9);
 
     struct Node *list_2 = NULL;
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
+    push(&list_2, 9);
+    push(&list_2, 9);
+    push(&list_2, 8);
+    //push(&list_2, 9);
 
     struct Node *list_3 = NULL;
 
-    printf("Created DLL is: ");
-
     list_3 = addTwoLists(list_1, list_2);
-    printList(list_3);
+    printListNum(list_3);
     return 0;
 }
