@@ -105,6 +105,34 @@ void append(struct Node **head_ref, int new_data)
     return;
 }
 
+void delateList(struct Node **head_ref)
+{
+    struct Node *prev = *head_ref;
+
+    while (*head_ref)
+    {
+        *head_ref = (*head_ref)->next;
+
+        free(prev);
+        prev = *head_ref;
+    }
+}
+
+void reverse(struct Node **head_ref)
+{
+    struct Node *prev = NULL;
+    struct Node *current = *head_ref;
+    struct Node *next;
+    while (current != NULL)
+    {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head_ref = prev;
+}
+
 // This function prints contents of linked list starting
 // from the given node
 void printList(struct Node *node)
@@ -140,16 +168,17 @@ void printListNum(struct Node *node)
 /*
 add two list struct Node *node1, struct Node *node2 and return struct Node *
 */
-struct Node *addTwoLists(struct Node *node1, struct Node *node2) 
+struct Node *addTwoLists(struct Node *node1, struct Node *node2)
 {
-    int sum, carry=0;
+    int sum, carry = 0;
     struct Node *resultat = NULL;
     while (node1 != NULL && node2 != NULL)
     {
         sum = node1->data + node2->data + carry; // es 13
+        printf("%d + %d = %d\n", node1->data, node2->data, sum);
         carry = 0;
-        carry = sum / 10; // carry = 1
-        sum -= carry * 10; //sum = 13-(1*10) = 3
+        carry = sum / 10;     // carry = 1
+        sum -= carry * 10;    //sum = 13-(1*10) = 3
         push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
         node1 = node1->next;
         node2 = node2->next;
@@ -168,8 +197,8 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
         {
             sum = node2->data + carry; // es 13
             carry = 0;
-            carry = sum / 10; // carry = 1
-            sum -= carry * 10; //sum = 13-(1*10) = 3
+            carry = sum / 10;     // carry = 1
+            sum -= carry * 10;    //sum = 13-(1*10) = 3
             push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
             node2 = node2->next;
         }
@@ -185,8 +214,8 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
         {
             sum = node1->data + carry; // es 13
             carry = 0;
-            carry = sum / 10; // carry = 1
-            sum -= carry * 10; //sum = 13-(1*10) = 3
+            carry = sum / 10;     // carry = 1
+            sum -= carry * 10;    //sum = 13-(1*10) = 3
             push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
             node1 = node1->next;
         }
@@ -195,7 +224,54 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
             push(&resultat, carry);
         }
     }
-    
+
+    return resultat;
+}
+
+struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2)
+{
+    int multiply, carry = 0, issecond = 0;
+    struct Node *resultat = NULL;
+    struct Node *tmp_resultat = NULL;
+    struct Node *tmp_node1 = node1; //head of node1
+    struct Node *tmp_node2 = node2; //head of node2
+
+    for (int i = 0; node1 != NULL; i++)
+    {
+        node2 = tmp_node2;
+        while (node2 != NULL)
+        {
+            multiply = (node1->data * node2->data) + carry;
+            //printf("%d * %d = %d\n",node1->data,node2->data,multiply);
+            carry = 0;
+            carry = multiply / 10;  // carry = 1
+            multiply -= carry * 10; //sum = 13-(1*10) = 3
+
+            push(&tmp_resultat, multiply);
+
+            //printf("%d", multiply);
+            node2 = node2->next;
+        }
+        if (carry != 0)
+        {
+            //printf("%d", carry);
+            push(&tmp_resultat, carry);
+            carry = 0;
+        }
+        for (int y = 0; y < i; y++)
+        {
+            //printf("0");
+            append(&tmp_resultat, 0);
+        }
+        printListNum(tmp_resultat);
+        
+        resultat = addTwoLists(tmp_resultat, resultat); //errore perchè somma enemento prima lista e ultimo elemento deconda lista
+        delateList(&tmp_resultat);
+        //delateList(&resultat);
+        node1 = node1->next;
+        printf("\n");
+    }
+
     return resultat;
 }
 
@@ -206,20 +282,24 @@ int main()
     struct Node *list_1 = NULL;
 
     // Insert 6.  So linked list becomes 6->NULL
-    push(&list_1, 9);
-    push(&list_1, 9);
-    push(&list_1, 9);
-    push(&list_1, 9);
+    push(&list_1, 8);
+    push(&list_1, 7);
+    push(&list_1, 2);
 
     struct Node *list_2 = NULL;
+    push(&list_2, 7);
     push(&list_2, 9);
-    push(&list_2, 9);
-    push(&list_2, 8);
+    //push(&list_2, 8);
     //push(&list_2, 9);
 
     struct Node *list_3 = NULL;
 
-    list_3 = addTwoLists(list_1, list_2);
+    printListNum(list_1);
+    printf(" * ");
+    printListNum(list_2);
+    printf("\n");
+
+    list_3 = multiplyTwoLists(list_2, list_1);
     printListNum(list_3);
     return 0;
 }
