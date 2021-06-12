@@ -118,7 +118,7 @@ void delateList(struct Node **head_ref)
     }
 }
 
-void reverse(struct Node **head_ref)
+void reverse1(struct Node **head_ref)
 {
     struct Node *prev = NULL;
     struct Node *current = *head_ref;
@@ -131,6 +131,23 @@ void reverse(struct Node **head_ref)
         current = next;
     }
     *head_ref = prev;
+}
+
+int reverse(struct Node** head_ref)
+{
+    struct Node* prev = NULL;
+    struct Node* current = *head_ref;
+    struct Node* next;
+    int len = 0;
+    while (current != NULL) {
+        len++;
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head_ref = prev;
+    return len;
 }
 
 // This function prints contents of linked list starting
@@ -175,7 +192,6 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
     while (node1 != NULL && node2 != NULL)
     {
         sum = node1->data + node2->data + carry; // es 13
-        printf("%d + %d = %d\n", node1->data, node2->data, sum);
         carry = 0;
         carry = sum / 10;     // carry = 1
         sum -= carry * 10;    //sum = 13-(1*10) = 3
@@ -228,7 +244,7 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
     return resultat;
 }
 
-struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2)
+struct Node *multiplyTwoLists1(struct Node *node1, struct Node *node2)
 {
     int multiply, carry = 0, issecond = 0;
     struct Node *resultat = NULL;
@@ -264,7 +280,7 @@ struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2)
             append(&tmp_resultat, 0);
         }
         printListNum(tmp_resultat);
-        
+
         resultat = addTwoLists(tmp_resultat, resultat); //errore perchè somma enemento prima lista e ultimo elemento deconda lista
         delateList(&tmp_resultat);
         //delateList(&resultat);
@@ -275,6 +291,92 @@ struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2)
     return resultat;
 }
 
+struct Node *make_empty_list(int size)
+{
+    struct Node *head = NULL;
+    while (size--)
+        push(&head, 0);
+    return head;
+}
+
+// Multiply contents of two linked lists => store
+// in another list and return its head
+struct Node *multiplyTwoLists(struct Node *first, struct Node *second)
+{
+    // reverse the lists to muliply from end
+    // m and n lengths of linked lists to make
+    // and empty list
+    int m = reverse(&first), n = reverse(&second);
+
+    // make a list that will contain the result
+    // of multiplication.
+    // m+n+1 can be max size of the list
+    struct Node *result = make_empty_list(m + n + 1);
+
+    // pointers for traverse linked lists and also
+    // to reverse them after
+    struct Node *second_ptr = second, *result_ptr1 = result, *result_ptr2, *first_ptr;
+
+    // multiply each Node of second list with first
+    while (second_ptr)
+    {
+
+        int carry = 0;
+
+        // each time we start from the next of Node
+        // from which we started last time
+        result_ptr2 = result_ptr1;
+
+        first_ptr = first;
+
+        while (first_ptr)
+        {
+
+            // multiply a first list's digit with a
+            // current second list's digit
+            int mul = first_ptr->data * second_ptr->data + carry;
+
+            // Assigne the product to corresponding Node
+            // of result
+            result_ptr2->data += mul % 10;
+
+            // now resultant Node itself can have more
+            // than 1 digit
+            carry = mul / 10 + result_ptr2->data / 10;
+            result_ptr2->data = result_ptr2->data % 10;
+
+            first_ptr = first_ptr->next;
+            result_ptr2 = result_ptr2->next;
+        }
+
+        // if carry is remaining from last multiplication
+        if (carry > 0)
+        {
+            result_ptr2->data += carry;
+        }
+
+        result_ptr1 = result_ptr1->next;
+        second_ptr = second_ptr->next;
+    }
+
+    // reverse the result_list as it was populated
+    // from last Node
+    reverse(&result);
+    reverse(&first);
+    reverse(&second);
+
+    // remove if there are zeros at starting
+    while (result->data == 0)
+    {
+        struct Node *temp = result;
+        result = result->next;
+        free(temp);
+    }
+
+    // Return head of multiplication list
+    return result;
+}
+
 /* Driver program to test above functions*/
 int main()
 {
@@ -282,15 +384,21 @@ int main()
     struct Node *list_1 = NULL;
 
     // Insert 6.  So linked list becomes 6->NULL
-    push(&list_1, 8);
-    push(&list_1, 7);
-    push(&list_1, 2);
+    append(&list_1, 8);
+    append(&list_1, 7);
+    append(&list_1, 2);
 
     struct Node *list_2 = NULL;
-    push(&list_2, 7);
-    push(&list_2, 9);
-    //push(&list_2, 8);
-    //push(&list_2, 9);
+    append(&list_2, 7);
+    append(&list_2, 9);
+    append(&list_2, 8);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
+    append(&list_2, 9);
 
     struct Node *list_3 = NULL;
 
