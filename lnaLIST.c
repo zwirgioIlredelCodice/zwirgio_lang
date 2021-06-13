@@ -118,38 +118,6 @@ void delateList(struct Node **head_ref)
     }
 }
 
-void reverse1(struct Node **head_ref)
-{
-    struct Node *prev = NULL;
-    struct Node *current = *head_ref;
-    struct Node *next;
-    while (current != NULL)
-    {
-        next = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
-    }
-    *head_ref = prev;
-}
-
-int reverse(struct Node** head_ref)
-{
-    struct Node* prev = NULL;
-    struct Node* current = *head_ref;
-    struct Node* next;
-    int len = 0;
-    while (current != NULL) {
-        len++;
-        next = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
-    }
-    *head_ref = prev;
-    return len;
-}
-
 // This function prints contents of linked list starting
 // from the given node
 void printList(struct Node *node)
@@ -171,14 +139,18 @@ void printList(struct Node *node)
     }
 }
 
-void printListNum(struct Node *node)
+void printListNum(struct Node *node) //print a list in reverse
 {
     struct Node *last;
     while (node != NULL)
     {
-        printf("%d", node->data);
         last = node;
         node = node->next;
+    }
+    while (last != NULL)
+    {
+        printf("%d", last->data);
+        last = last->prev;
     }
 }
 
@@ -187,194 +159,76 @@ add two list struct Node *node1, struct Node *node2 and return struct Node *
 */
 struct Node *addTwoLists(struct Node *node1, struct Node *node2)
 {
-    int sum, carry = 0;
+    int num1, num2, sum, carry = 0;
     struct Node *resultat = NULL;
-    while (node1 != NULL && node2 != NULL)
+    while (1)
     {
-        sum = node1->data + node2->data + carry; // es 13
-        carry = 0;
-        carry = sum / 10;     // carry = 1
-        sum -= carry * 10;    //sum = 13-(1*10) = 3
-        push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
-        node1 = node1->next;
-        node2 = node2->next;
-    }
-    if (node1 == NULL && node2 == NULL) //same size
-    {
-        if (carry != 0)
+        if (node1 == NULL && node2 == NULL)
         {
-            push(&resultat, carry);
+            break;
         }
-    }
 
-    else if (node1 == NULL) //size node1 < size node2
-    {
-        while (node2 != NULL)
+        num1 = 0;
+        num2 = 0;
+        if (node1 != NULL)
         {
-            sum = node2->data + carry; // es 13
-            carry = 0;
-            carry = sum / 10;     // carry = 1
-            sum -= carry * 10;    //sum = 13-(1*10) = 3
-            push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
-            node2 = node2->next;
-        }
-        if (carry != 0)
-        {
-            push(&resultat, carry);
-        }
-    }
-
-    else //size node1 > size node2
-    {
-        while (node1 != NULL)
-        {
-            sum = node1->data + carry; // es 13
-            carry = 0;
-            carry = sum / 10;     // carry = 1
-            sum -= carry * 10;    //sum = 13-(1*10) = 3
-            push(&resultat, sum); //push perchè cosi lo mette al inizio cosi centinaia->decine
+            num1 = node1->data;
             node1 = node1->next;
         }
-        if (carry != 0)
+        if (node2 != NULL)
         {
-            push(&resultat, carry);
+            num2 = node2->data;
+            node2 = node2->next;
         }
+
+        sum = num1 + num2 + carry;
+        carry = sum / 10;
+        sum -= carry * 10;
+
+        append(&resultat, sum);
     }
 
+    if (carry != 0)
+    {
+        append(&resultat, sum);
+    }
     return resultat;
 }
 
-struct Node *multiplyTwoLists1(struct Node *node1, struct Node *node2)
+struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2) //maybe resultat is using memory form the previous loops so BIG MEMORY USAGE
 {
-    int multiply, carry = 0, issecond = 0;
+    int multiply, carry = 0;
     struct Node *resultat = NULL;
+    struct Node *head_node2 = node2;
     struct Node *tmp_resultat = NULL;
-    struct Node *tmp_node1 = node1; //head of node1
-    struct Node *tmp_node2 = node2; //head of node2
 
     for (int i = 0; node1 != NULL; i++)
     {
-        node2 = tmp_node2;
+        node2 = head_node2;
+        delateList(&tmp_resultat);
+
+        for (int y = 0; y < i; y++)
+        {
+            append(&tmp_resultat,0);
+        }
         while (node2 != NULL)
         {
             multiply = (node1->data * node2->data) + carry;
-            //printf("%d * %d = %d\n",node1->data,node2->data,multiply);
             carry = 0;
-            carry = multiply / 10;  // carry = 1
-            multiply -= carry * 10; //sum = 13-(1*10) = 3
-
-            push(&tmp_resultat, multiply);
-
-            //printf("%d", multiply);
+            carry = multiply / 10;
+            multiply -= carry * 10;
+            append(&tmp_resultat,multiply);
             node2 = node2->next;
         }
         if (carry != 0)
         {
-            //printf("%d", carry);
-            push(&tmp_resultat, carry);
+            append(&tmp_resultat,carry);
             carry = 0;
         }
-        for (int y = 0; y < i; y++)
-        {
-            //printf("0");
-            append(&tmp_resultat, 0);
-        }
-        printListNum(tmp_resultat);
-
-        resultat = addTwoLists(tmp_resultat, resultat); //errore perchè somma enemento prima lista e ultimo elemento deconda lista
-        delateList(&tmp_resultat);
-        //delateList(&resultat);
+        resultat = addTwoLists(resultat,tmp_resultat);
         node1 = node1->next;
-        printf("\n");
     }
-
     return resultat;
-}
-
-struct Node *make_empty_list(int size)
-{
-    struct Node *head = NULL;
-    while (size--)
-        push(&head, 0);
-    return head;
-}
-
-// Multiply contents of two linked lists => store
-// in another list and return its head
-struct Node *multiplyTwoLists(struct Node *first, struct Node *second)
-{
-    // reverse the lists to muliply from end
-    // m and n lengths of linked lists to make
-    // and empty list
-    int m = reverse(&first), n = reverse(&second);
-
-    // make a list that will contain the result
-    // of multiplication.
-    // m+n+1 can be max size of the list
-    struct Node *result = make_empty_list(m + n + 1);
-
-    // pointers for traverse linked lists and also
-    // to reverse them after
-    struct Node *second_ptr = second, *result_ptr1 = result, *result_ptr2, *first_ptr;
-
-    // multiply each Node of second list with first
-    while (second_ptr)
-    {
-
-        int carry = 0;
-
-        // each time we start from the next of Node
-        // from which we started last time
-        result_ptr2 = result_ptr1;
-
-        first_ptr = first;
-
-        while (first_ptr)
-        {
-
-            // multiply a first list's digit with a
-            // current second list's digit
-            int mul = first_ptr->data * second_ptr->data + carry;
-
-            // Assigne the product to corresponding Node
-            // of result
-            result_ptr2->data += mul % 10;
-
-            // now resultant Node itself can have more
-            // than 1 digit
-            carry = mul / 10 + result_ptr2->data / 10;
-            result_ptr2->data = result_ptr2->data % 10;
-
-            first_ptr = first_ptr->next;
-            result_ptr2 = result_ptr2->next;
-        }
-
-        // if carry is remaining from last multiplication
-        if (carry > 0)
-        {
-            result_ptr2->data += carry;
-        }
-
-        result_ptr1 = result_ptr1->next;
-        second_ptr = second_ptr->next;
-    }
-
-    // reverse the result_list as it was populated
-    // from last Node
-    reverse(&result);
-    reverse(&first);
-    reverse(&second);
-
-    // remove if there are zeros at starting
-    while (result->data == 0)
-    {
-        struct Node *temp = result;
-        result = result->next;
-        free(temp);
-    }
-
-    // Return head of multiplication list
-    return result;
 }
 
 /* Driver program to test above functions*/
@@ -382,23 +236,13 @@ int main()
 {
     /* Start with the empty list */
     struct Node *list_1 = NULL;
-
-    // Insert 6.  So linked list becomes 6->NULL
-    append(&list_1, 8);
-    append(&list_1, 7);
-    append(&list_1, 2);
+    push(&list_1, 8);
+    push(&list_1, 7);
+    push(&list_1, 2);
 
     struct Node *list_2 = NULL;
-    append(&list_2, 7);
-    append(&list_2, 9);
-    append(&list_2, 8);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
-    append(&list_2, 9);
+    push(&list_2, 7);
+    push(&list_2, 9);
 
     struct Node *list_3 = NULL;
 
