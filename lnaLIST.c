@@ -154,12 +154,24 @@ void printListNum(struct Node *node) //print a list in reverse
     }
 }
 
+void reciprocalList(struct Node **head_ref)
+{
+    struct Node *head = *head_ref;
+    while (*head_ref != NULL)
+    {
+        (*head_ref)->data = -((*head_ref)->data); //if is - become +
+        *head_ref = (*head_ref)->next;
+    }
+    *head_ref = head; //head ref become = the head and no the last element
+}
+
 /*
 add two list struct Node *node1, struct Node *node2 and return struct Node *
 */
 struct Node *addTwoLists(struct Node *node1, struct Node *node2)
 {
     int num1, num2, sum, carry = 0;
+    struct Node *tmp = NULL;
     struct Node *resultat = NULL;
     while (1)
     {
@@ -181,6 +193,20 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
             node2 = node2->next;
         }
 
+        if ((num1 + num2 < 0) && (num1 > 0 || num2 > 0))
+        {
+            if (node1 != NULL)
+            {
+                num1 += 10;
+                node1->data -= 1;
+            }
+            else
+            {
+                num2 += 10;
+                node2->data -= 1;
+            }
+        }
+
         sum = num1 + num2 + carry;
         carry = sum / 10;
         sum -= carry * 10;
@@ -193,6 +219,12 @@ struct Node *addTwoLists(struct Node *node1, struct Node *node2)
         append(&resultat, sum);
     }
     return resultat;
+}
+
+struct Node *subtractTwoLists(struct Node *node1, struct Node *node2)
+{
+    reciprocalList(&node2); // es 123 -21 = 123+(-21)
+    return addTwoLists(node1, node2);
 }
 
 struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2) //maybe resultat is using memory form the previous loops so BIG MEMORY USAGE
@@ -209,7 +241,7 @@ struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2) //maybe re
 
         for (int y = 0; y < i; y++)
         {
-            append(&tmp_resultat,0);
+            append(&tmp_resultat, 0);
         }
         while (node2 != NULL)
         {
@@ -217,15 +249,15 @@ struct Node *multiplyTwoLists(struct Node *node1, struct Node *node2) //maybe re
             carry = 0;
             carry = multiply / 10;
             multiply -= carry * 10;
-            append(&tmp_resultat,multiply);
+            append(&tmp_resultat, multiply);
             node2 = node2->next;
         }
         if (carry != 0)
         {
-            append(&tmp_resultat,carry);
+            append(&tmp_resultat, carry);
             carry = 0;
         }
-        resultat = addTwoLists(resultat,tmp_resultat);
+        resultat = addTwoLists(resultat, tmp_resultat);
         node1 = node1->next;
     }
     return resultat;
@@ -247,11 +279,11 @@ int main()
     struct Node *list_3 = NULL;
 
     printListNum(list_1);
-    printf(" * ");
+    printf(" - ");
     printListNum(list_2);
     printf("\n");
 
-    list_3 = multiplyTwoLists(list_2, list_1);
+    list_3 = subtractTwoLists(list_1, list_2);
     printListNum(list_3);
     return 0;
 }
